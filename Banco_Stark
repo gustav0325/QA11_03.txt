@@ -1,0 +1,93 @@
+PARTE 04 — Casos de Teste
+Template — Caso de Teste 1
+
+ID: CT-001
+
+Título/Objetivo: Validar impedimento de depósito com valor zero.
+
+Pré-condição: Conta "tony" já deve existir.
+
+Passos: 1. Chamar banco.depositar('tony', 0)
+2. Verificar a mensagem de saída.
+3. Verificar se o saldo permaneceu inalterado.
+
+Resultado esperado: O sistema deve exibir uma mensagem de erro ("Valor de depósito deve ser maior que zero") e não realizar a operação.
+
+Resultado obtido: OK - Depósito realizado: 0
+
+Status (Pass/Fail): FAIL
+
+Evidência: Saída do console mostra que o sistema aceitou o valor zero como um depósito válido.
+
+Template — Caso de Teste 2
+
+ID: CT-002
+
+Título/Objetivo: Validar impedimento de depósito com valor negativo.
+
+Pré-condição: Conta "tony" já deve existir com saldo de 1000.
+
+Passos:
+
+Chamar banco.depositar('tony', -100)
+
+Consultar o saldo atual.
+
+Resultado esperado: O sistema deve rejeitar valores negativos. O saldo deveria continuar 1000.
+
+Resultado obtido: OK - Depósito realizado: -100. O saldo caiu para 900.
+
+Status (Pass/Fail): FAIL
+
+Evidência: O sistema subtraiu o valor do saldo em uma operação de depósito.
+
+Template — Caso de Teste 3
+
+ID: CT-003
+
+Título/Objetivo: Validar tentativa de saque acima do saldo disponível.
+
+Pré-condição: Conta "tony" existe com saldo insuficiente para o valor solicitado.
+
+Passos:
+
+Chamar banco.sacar('tony', 100000)
+
+Resultado esperado: Exibir mensagem "ERRO - Saldo insuficiente".
+
+Resultado obtido: ERRO - Saldo insuficiente
+
+Status (Pass/Fail): PASS
+
+Evidência: O sistema barrou a operação corretamente conforme o requisito.
+
+PARTE 05 — Bug Report
+Template — Bug Report
+
+Título: Sistema permite depósitos de valores negativos, reduzindo o saldo do cliente.
+
+Severidade: Alta (Afeta diretamente a integridade financeira e o saldo).
+
+Prioridade: Alta (Precisa ser corrigido antes do deploy).
+
+Ambiente: Google Colab / Python 3.x / Banco do Stark
+
+Descrição: O método depositar não possui validação para valores menores ou iguais a zero. Isso permite que um "depósito" atue como um saque indevido.
+
+Passos para reproduzir:
+
+Criar uma conta: banco.criar_conta('gustavo')
+
+Realizar um depósito positivo: banco.depositar('gustavo', 100)
+
+Realizar um depósito negativo: banco.depositar('gustavo', -50)
+
+Consultar o saldo: banco.saldo_atual('gustavo')
+
+Resultado esperado: O sistema deveria retornar um erro no passo 3 e manter o saldo em 100.
+
+Resultado obtido: O sistema aceitou o depósito de -50 e o saldo final ficou em 50.0.
+
+Evidência: OK - Depósito realizado: -100 seguido de SALDO tony = 900.0 (considerando o cenário inicial).
+
+Impacto/Risco: Risco de fraude e erro contábil grave. O cliente pode "perder" dinheiro ao tentar depositar ou o banco pode ser lesado se a lógica for invertida em outras funções.
